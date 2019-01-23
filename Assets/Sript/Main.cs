@@ -154,7 +154,7 @@ public class Main : MonoBehaviour
             {
                 if (pole[y, x] == 0)
                 {
-                    allCube[y, x].SetActive(true);
+                    allCube[y, x].SetActive(false);
                     allCube[y, x].GetComponent<SpriteRenderer>().material.color = Color.black;
                 }
                 if (pole[y, x] == 1)
