@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
+    private int RejectMoveAsideA;
+    private int RejectMoveAsideD;
+    private int RejectRotate;
     private int[,] Tmp = new int[4, 4];
     private bool MoveASaide;
     public int Xtemp;
@@ -15,33 +18,33 @@ public class Main : MonoBehaviour
     public int[,] pole = new int[,]
     {
    {0,0,0,0,0,0,0,0},
-   {0,0,0,0,1,0,0,0},
-   {0,0,1,1,1,0,0,0},
+   {0,0,1,1,1,1,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,0,0,0,0,0,0},
-   {0,0,2,0,2,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,0,0,0,0,0,0},
+   {2,0,2,0,2,0,0,0},
     };
     // Start is called before the first frame update
     void Start()
     {
         allCube = new GameObject[16, 8];
         SpeedTmp = Speed;
-        for (int y=0; y<16; y++)
+        for (int y = 0; y < 16; y++)
         {
-            for(int x = 0; x < 8; x++)
+            for (int x = 0; x < 8; x++)
             {
                 allCube[y, x] = GameObject.Instantiate(PrfCube);
-                allCube[y, x].transform.position = new Vector3(x, 15- y, 0);
+                allCube[y, x].transform.position = new Vector3(x, 15 - y, 0);
             }
 
         }
@@ -52,9 +55,19 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        MoveAside();
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        {
+            MoveAside();
+        }
 
-        Rotate();
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            Rotate();
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            MoveDown();
+        }
 
         if (SpeedTmp > 0)
         {
@@ -72,13 +85,14 @@ public class Main : MonoBehaviour
 
     void Create()
     {
-        Xtemp= 2;
-        Ytemp= 0;
+        RejectRotate = 0;
+        Xtemp = 2;
+        Ytemp = 0;
 
-        pole[2, 2] = 1;
-        pole[2, 3] = 1;
-        pole[2, 4] = 1;
+        pole[1, 2] = 1;
+        pole[1, 3] = 1;
         pole[1, 4] = 1;
+        pole[1, 5] = 1;
         return;
     }
 
@@ -139,6 +153,8 @@ public class Main : MonoBehaviour
                         }
 
                     }
+                    CheckLine();
+                    CheckGameOver();
                     Create();
                     return;
                 }
@@ -157,6 +173,8 @@ public class Main : MonoBehaviour
                         }
 
                     }
+                    CheckLine();
+                    CheckGameOver();
                     Create();
                     return;
                 }
@@ -166,7 +184,28 @@ public class Main : MonoBehaviour
 
     void MoveAside()
     {
-        if(Input.GetKeyDown(KeyCode.D))
+        for (int y = 15; y >= 0; y--)
+        {
+            for (int x = 6; x >= 0; x--)
+            {
+                if (pole[y, x] == 1 && pole[y, x + 1] == 2)
+                {
+                    RejectMoveAsideD = 1;
+                }
+            }
+        }
+        for (int y = 15; y >= 0; y--)
+        {
+            for (int x = 1; x < 8; x++)
+            {
+                if (pole[y, x] == 1 && pole[y, x - 1] == 2)
+                {
+                    RejectMoveAsideA = 1;
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && RejectMoveAsideD == 0)
         {
             for (int y = 15; y >= 0; y--)
             {
@@ -176,7 +215,6 @@ public class Main : MonoBehaviour
                 }
 
             }
-
             for (int y = 15; y >= 0; y--)
             {
                 for (int x = 7; x >= 0; x--)
@@ -195,7 +233,7 @@ public class Main : MonoBehaviour
                 MoveASaide = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) && RejectMoveAsideA == 0)
         {
             for (int y = 15; y >= 0; y--)
             {
@@ -222,30 +260,51 @@ public class Main : MonoBehaviour
                 MoveASaide = false;
             }
         }
-        if (Input.GetKey(KeyCode.S))
-        {
-            MoveDown();
-        }
+        RejectMoveAsideA = 0;
+        RejectMoveAsideD = 0;
     }
     void Rotate()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
             {
-                for (int j = 0; j < 4; j++)
+                Tmp[i, j] = 0;
+            }
+        }
+
+        for (int y = Ytemp; y < Ytemp + 4; y++)
+        {
+            for (int x = Xtemp; x < Xtemp + 4; x++)
+            {
+                if (x < 0 || x > 7)
                 {
-                    Tmp[i, j] = 0;
+                    RejectRotate = 1;
+                    return;
+                }
+                if (pole[y, x] == 1)
+                {
+                    Tmp[x - Xtemp, 3 - (y - Ytemp)] = pole[y, x];
+                }
+
+                if (Tmp[y - Ytemp, x - Xtemp] == 1 && pole[y, x] == 2)
+                {
+                    RejectRotate = 1;
+                    return;
                 }
             }
+        }
+        if (Input.GetKeyDown(KeyCode.W) && RejectRotate == 0)
+        {
+
             for (int y = Ytemp; y < Ytemp + 4; y++)
             {
                 for (int x = Xtemp; x < Xtemp + 4; x++)
                 {
-                    if (pole[y , x] == 1)
+
+                    if (pole[y, x] == 1)
                     {
-                        Tmp[x - Xtemp, 3 - (y - Ytemp)] = pole[y, x];
-                        pole[y , x ] = 0;
+                        pole[y, x] = 0;
                     }
                 }
             }
@@ -253,9 +312,75 @@ public class Main : MonoBehaviour
             {
                 for (int x = Xtemp; x < Xtemp + 4; x++)
                 {
-                    pole[y, x] = Tmp[y - Ytemp, x - Xtemp];
+                    if (Tmp[y - Ytemp, x - Xtemp] == 1)
+                    {
+                        pole[y, x] = Tmp[y - Ytemp, x - Xtemp];
+                    }
+                }
+            }
+        }
+        RejectRotate = 0;
+    }
+    void CheckLine()
+    {
+        for (int y = 0; y < 16; y++)
+        {
+            if (SumLine(y, 7) == 16)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    pole[y, x] = 0;
+                }
+
+                for (int i = y; i > 0; i--)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (pole[i, j] == 0 && pole[i - 1, j] == 2)
+                        {
+                            pole[i, j] = 2;
+                            pole[i - 1, j] = 0;
+                        }
+                    }
+
+                }
+            }
+
+        }
+    }
+    public int SumLine(int y, int x)
+    {
+        if (x < 0)
+        {
+            return 0;
+        }
+
+        else
+        {
+            return pole[y, x] + SumLine(y, x - 1);
+        }
+
+    }
+    void CheckGameOver()
+    {
+        for (int y=0; y < 3; y++)
+        {
+            for (int x=0; x<8; x++)
+            {
+                if(pole [y,x]==2)
+                {
+                    Debug.Log("Game Over");
+                    for (int i = 0; i < 16; i++)
+                    {
+                        for(int j = 0; j < 8; j++)
+                        {
+                            pole[i, j] = 0;
+                        }
+                    }
+
                 }
             }
         }
     }
+
 }
