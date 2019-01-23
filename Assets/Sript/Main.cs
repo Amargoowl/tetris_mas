@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
+    private int Figure;
     private int RejectMoveAsideA;
     private int RejectMoveAsideD;
     private int RejectRotate;
@@ -18,21 +19,21 @@ public class Main : MonoBehaviour
     public int[,] pole = new int[,]
     {
    {0,0,0,0,0,0,0,0},
-   {0,0,1,1,1,1,0,0},
+   {0,0,0,1,1,0,0,0},
+   {0,0,1,1,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,0,0,0,0,0,0},
-   {2,0,2,0,2,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
     };
     // Start is called before the first frame update
     void Start()
@@ -89,11 +90,60 @@ public class Main : MonoBehaviour
         Xtemp = 2;
         Ytemp = 0;
 
-        pole[1, 2] = 1;
-        pole[1, 3] = 1;
-        pole[1, 4] = 1;
-        pole[1, 5] = 1;
-        return;
+        Figure = Random.Range(1, 7);
+
+        switch (Figure)
+        {
+            case 1 :
+                pole[1, 2] = 1;
+                pole[1, 3] = 1;
+                pole[1, 4] = 1;
+                pole[1, 5] = 1;
+                break;
+
+            case 2 :
+                pole[0, 3] = 1;
+                pole[1, 3] = 1;
+                pole[1, 4] = 1;
+                pole[1, 5] = 1;
+                break;
+
+            case 3:
+                pole[0, 5] = 1;
+                pole[1, 3] = 1;
+                pole[1, 4] = 1;
+                pole[1, 5] = 1;
+                break;
+
+            case 4:
+                pole[2, 3] = 1;
+                pole[1, 3] = 1;
+                pole[1, 4] = 1;
+                pole[2, 4] = 1;
+                break;
+
+            case 5:
+                pole[2, 2] = 1;
+                pole[2, 3] = 1;
+                pole[1, 3] = 1;
+                pole[1, 4] = 1;
+                break;
+
+            case 6:
+                pole[2, 2] = 1;
+                pole[2, 3] = 1;
+                pole[1, 3] = 1;
+                pole[2, 4] = 1;
+                break;
+
+            case 7:
+                pole[1, 2] = 1;
+                pole[2, 3] = 1;
+                pole[1, 3] = 1;
+                pole[2, 4] = 1;
+                break;
+        }
+
     }
 
     void Fill()
