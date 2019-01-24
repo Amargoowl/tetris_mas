@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
+    private int Level;
+    public Text Score;
+    private int Count;
     private int Figure;
     private int RejectMoveAsideA;
     private int RejectMoveAsideD;
@@ -154,7 +158,7 @@ public class Main : MonoBehaviour
             {
                 if (pole[y, x] == 0)
                 {
-                    allCube[y, x].SetActive(false);
+                    allCube[y, x].SetActive(true);
                     allCube[y, x].GetComponent<SpriteRenderer>().material.color = Color.black;
                 }
                 if (pole[y, x] == 1)
@@ -380,6 +384,8 @@ public class Main : MonoBehaviour
                 for (int x = 0; x < 8; x++)
                 {
                     pole[y, x] = 0;
+                    Count += 10;
+                    Score.text = Count.ToString();
                 }
 
                 for (int i = y; i > 0; i--)
@@ -420,6 +426,8 @@ public class Main : MonoBehaviour
                 if(pole [y,x]==2)
                 {
                     Debug.Log("Game Over");
+                    Count = 0;
+                    Score.text = Count.ToString();
                     for (int i = 0; i < 16; i++)
                     {
                         for(int j = 0; j < 8; j++)
