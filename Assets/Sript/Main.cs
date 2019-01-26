@@ -7,24 +7,23 @@ public class Main : MonoBehaviour
 {
     private int Level;
     public Text Score;
-    private int Count;
+    private int _score;
     private int Figure;
     private int RejectMoveAsideA;
     private int RejectMoveAsideD;
-    private int RejectRotate;
     private int[,] Tmp = new int[4, 4];
     private bool MoveASaide;
-    public int Xtemp;
-    public int Ytemp;
-    public float Speed = 10f;
+    private int Xtemp;
+    private int Ytemp;
+    private float Speed;
     private float SpeedTmp;
     public GameObject PrfCube;
     public GameObject[,] allCube;
     public int[,] pole = new int[,]
     {
    {0,0,0,0,0,0,0,0},
-   {0,0,0,1,1,0,0,0},
-   {0,0,1,1,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
+   {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
    {0,0,0,0,0,0,0,0},
@@ -56,6 +55,13 @@ public class Main : MonoBehaviour
         Xtemp = 2;
         Ytemp = 0;
 
+        Speed = 1f;
+        Level = 0;
+
+        _score = 0;
+
+        Create();
+
     }
 
     void Update()
@@ -85,12 +91,13 @@ public class Main : MonoBehaviour
         }
 
         Fill();
+
+        CheckSpeedLevel();
     }
 
 
     void Create()
     {
-        RejectRotate = 0;
         Xtemp = 2;
         Ytemp = 0;
 
@@ -175,19 +182,7 @@ public class Main : MonoBehaviour
         }
     }
     void MoveDown()
-    {
-        for (int y = 15; y >= 0; y--)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                if (pole[y, x] == 1 && y != 15)
-                {
-                    pole[y, x] = 0;
-                    pole[y + 1, x] = 1;
-                }
-            }
-        }
-        Ytemp += 1;
+    {   
 
         for (int y = 15; y >= 0; y--)
         {
@@ -234,6 +229,18 @@ public class Main : MonoBehaviour
                 }
             }
         }
+        for (int y = 15; y >= 0; y--)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                if (pole[y, x] == 1 && y != 15)
+                {
+                    pole[y, x] = 0;
+                    pole[y + 1, x] = 1;
+                }
+            }
+        }
+        Ytemp += 1;
     }
 
     void MoveAside()
@@ -319,6 +326,7 @@ public class Main : MonoBehaviour
     }
     void Rotate()
     {
+
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -333,7 +341,6 @@ public class Main : MonoBehaviour
             {
                 if (x < 0 || x > 7)
                 {
-                    RejectRotate = 1;
                     return;
                 }
                 if (pole[y, x] == 1)
@@ -341,16 +348,25 @@ public class Main : MonoBehaviour
                     Tmp[x - Xtemp, 3 - (y - Ytemp)] = pole[y, x];
                 }
 
+            }
+
+        }
+        for (int y = Ytemp; y < Ytemp + 4; y++)
+        {
+            for (int x = Xtemp; x < Xtemp + 4; x++)
+            {
                 if (Tmp[y - Ytemp, x - Xtemp] == 1 && pole[y, x] == 2)
                 {
-                    RejectRotate = 1;
                     return;
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.W) && RejectRotate == 0)
-        {
 
+
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            Debug.Log($"Rotate is On");
             for (int y = Ytemp; y < Ytemp + 4; y++)
             {
                 for (int x = Xtemp; x < Xtemp + 4; x++)
@@ -373,7 +389,7 @@ public class Main : MonoBehaviour
                 }
             }
         }
-        RejectRotate = 0;
+
     }
     void CheckLine()
     {
@@ -384,8 +400,8 @@ public class Main : MonoBehaviour
                 for (int x = 0; x < 8; x++)
                 {
                     pole[y, x] = 0;
-                    Count += 10;
-                    Score.text = Count.ToString();
+                    _score += 10;
+                    Score.text = _score.ToString();
                 }
 
                 for (int i = y; i > 0; i--)
@@ -398,12 +414,12 @@ public class Main : MonoBehaviour
                             pole[i - 1, j] = 0;
                         }
                     }
-
                 }
             }
-
         }
+
     }
+
     public int SumLine(int y, int x)
     {
         if (x < 0)
@@ -417,6 +433,7 @@ public class Main : MonoBehaviour
         }
 
     }
+
     void CheckGameOver()
     {
         for (int y=0; y < 3; y++)
@@ -426,8 +443,8 @@ public class Main : MonoBehaviour
                 if(pole [y,x]==2)
                 {
                     Debug.Log("Game Over");
-                    Count = 0;
-                    Score.text = Count.ToString();
+                    _score = 0;
+                    Score.text = _score.ToString();
                     for (int i = 0; i < 16; i++)
                     {
                         for(int j = 0; j < 8; j++)
@@ -439,6 +456,10 @@ public class Main : MonoBehaviour
                 }
             }
         }
+    }
+    void CheckSpeedLevel()
+    {
+
     }
 
 }

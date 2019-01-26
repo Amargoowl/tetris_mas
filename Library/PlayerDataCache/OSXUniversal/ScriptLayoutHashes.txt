@@ -1,6 +1,6 @@
 OSXUniversal
 PlayerPath?
-D:/code/itdvn/unity/tetris_mac.app
+D:/code/itdvn/unity/build/mac/tetris.app
 SceneListBegin?
 Assets/Scenes/SampleScene.unity
 SceneListEnd?
@@ -113,7 +113,7 @@ ad9173d3a69d99153f38ed4b62226129 UnityEngine.Networking.dll:UnityEngine.Networki
 9b895dcabbc1faf095c000c32d471fd0 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 5887ef1bc706b22b773d253fd443ceef UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
-6b7e43549cc23a40a8105729500df407 Assembly-CSharp.dll:.Main
+e85b5591ee17f527224e4959b8913045 Assembly-CSharp.dll:.Main
 303ad70ce203ad874efe2965d0fbcff9 Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsEventTracker
 7fb9de8dcf73854b6b328eca1f7a6e6d Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsTracker
 94017dcc9f00fe671ea7dc427b4da011 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
