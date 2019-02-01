@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
-    private int Level;
+    private Vector2 PosBegan;
+    private Vector2 PosEnded;
+    private Vector2 PosSum;
+    public Text Level;
+    private int _level;
     public Text Score;
     private int _score;
     private int Figure;
@@ -56,7 +60,7 @@ public class Main : MonoBehaviour
         Ytemp = 0;
 
         Speed = 1f;
-        Level = 0;
+        _level = 0;
 
         _score = 0;
 
@@ -66,6 +70,13 @@ public class Main : MonoBehaviour
 
     void Update()
     {
+        CheckTouch();
+
+        if (_level > 0)
+        {
+            Speed = 1f / _level;
+        }
+
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
         {
             MoveAside();
@@ -79,7 +90,7 @@ public class Main : MonoBehaviour
         {
             MoveDown();
         }
-
+        
         if (SpeedTmp > 0)
         {
             SpeedTmp -= Time.deltaTime;
@@ -458,8 +469,38 @@ public class Main : MonoBehaviour
         }
     }
     void CheckSpeedLevel()
-    {
-
+    { if (_score > 0)
+        {
+            _level = Mathf.RoundToInt(_score / 1000);
+            Debug.Log(_level);
+        }
+        Level.text = _level.ToString();
     }
+   void CheckTouch()
+    {
+        if(Input.touchCount > 0)
+        {
+            Touch myTouch = Input.GetTouch(0);
 
+            if (myTouch.phase == TouchPhase.Began)
+            {
+                PosBegan = myTouch.position;
+                Debug.Log(PosBegan);
+            }
+            
+            if (myTouch.phase == TouchPhase.Ended)
+            {
+                PosEnded = myTouch.position;
+                PosSum = PosEnded - PosBegan;
+                if (Mathf.Abs(PosSum.x) > Mathf.Abs(PosSum.y))
+                {
+                    Debug.Log("Горизонталь");
+                }
+                else
+                {
+                    Debug.Log("Вертикаль");
+                }
+            }
+        }
+    }
 }
