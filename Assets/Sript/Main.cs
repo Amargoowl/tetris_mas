@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
+    private int TouchExec;
+    private float _touchDeltaTime;
+    private Touch myTouch;
     private Vector2 PosBegan;
     private Vector2 PosEnded;
     private Vector2 PosSum;
@@ -56,6 +59,8 @@ public class Main : MonoBehaviour
             }
 
         }
+        TouchExec = 0;
+
         Xtemp = 2;
         Ytemp = 0;
 
@@ -77,20 +82,23 @@ public class Main : MonoBehaviour
             Speed = 1f / _level;
         }
 
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        //if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) PC
+        if (TouchExec == 1 || TouchExec == 2)
         {
             MoveAside();
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
+        //if (Input.GetKeyDown(KeyCode.W))
+        if (TouchExec == 4)
         {
             Rotate();
         }
-        if (Input.GetKey(KeyCode.S))
+        //if (Input.GetKey(KeyCode.S)) PC
+        if (TouchExec == 3)
         {
             MoveDown();
         }
-        
+
         if (SpeedTmp > 0)
         {
             SpeedTmp -= Time.deltaTime;
@@ -116,14 +124,14 @@ public class Main : MonoBehaviour
 
         switch (Figure)
         {
-            case 1 :
+            case 1:
                 pole[1, 2] = 1;
                 pole[1, 3] = 1;
                 pole[1, 4] = 1;
                 pole[1, 5] = 1;
                 break;
 
-            case 2 :
+            case 2:
                 pole[0, 3] = 1;
                 pole[1, 3] = 1;
                 pole[1, 4] = 1;
@@ -193,7 +201,7 @@ public class Main : MonoBehaviour
         }
     }
     void MoveDown()
-    {   
+    {
 
         for (int y = 15; y >= 0; y--)
         {
@@ -277,7 +285,8 @@ public class Main : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.D) && RejectMoveAsideD == 0)
+        //if (Input.GetKeyDown(KeyCode.D) && RejectMoveAsideD == 0) PC
+        if (TouchExec == 1 && RejectMoveAsideD == 0)
         {
             for (int y = 15; y >= 0; y--)
             {
@@ -302,10 +311,12 @@ public class Main : MonoBehaviour
             if (MoveASaide)
             {
                 Xtemp += 1;
+                TouchExec = 0;
                 MoveASaide = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.A) && RejectMoveAsideA == 0)
+        //if (Input.GetKeyDown(KeyCode.A) && RejectMoveAsideA == 0)
+        if (TouchExec == 2 && RejectMoveAsideA == 0)
         {
             for (int y = 15; y >= 0; y--)
             {
@@ -329,6 +340,7 @@ public class Main : MonoBehaviour
             if (MoveASaide)
             {
                 Xtemp -= 1;
+                TouchExec = 0;
                 MoveASaide = false;
             }
         }
@@ -375,7 +387,8 @@ public class Main : MonoBehaviour
 
 
 
-        if (Input.GetKeyDown(KeyCode.W))
+        //if (Input.GetKeyDown(KeyCode.W)) PC
+        if (TouchExec == 4)
         {
             Debug.Log($"Rotate is On");
             for (int y = Ytemp; y < Ytemp + 4; y++)
@@ -399,6 +412,8 @@ public class Main : MonoBehaviour
                     }
                 }
             }
+            TouchExec = 0;
+
         }
 
     }
@@ -447,18 +462,18 @@ public class Main : MonoBehaviour
 
     void CheckGameOver()
     {
-        for (int y=0; y < 3; y++)
+        for (int y = 0; y < 3; y++)
         {
-            for (int x=0; x<8; x++)
+            for (int x = 0; x < 8; x++)
             {
-                if(pole [y,x]==2)
+                if (pole[y, x] == 2)
                 {
                     Debug.Log("Game Over");
                     _score = 0;
                     Score.text = _score.ToString();
                     for (int i = 0; i < 16; i++)
                     {
-                        for(int j = 0; j < 8; j++)
+                        for (int j = 0; j < 8; j++)
                         {
                             pole[i, j] = 0;
                         }
@@ -469,38 +484,80 @@ public class Main : MonoBehaviour
         }
     }
     void CheckSpeedLevel()
-    { if (_score > 0)
+    {
+        if (_score > 0)
         {
-            _level = Mathf.RoundToInt(_score / 1000);
-            Debug.Log(_level);
+            _level = Mathf.RoundToInt(_score / 1000);            
         }
         Level.text = _level.ToString();
     }
-   void CheckTouch()
+    void CheckTouch()
     {
-        if(Input.touchCount > 0)
+        if (TouchExec == 3 && Input.touchCount == 0)
         {
-            Touch myTouch = Input.GetTouch(0);
+            TouchExec = 0;
+        }
+        if (Input.touchCount > 0 && TouchExec == 0)
+        {
+            myTouch = Input.GetTouch(0);
+
+            _touchDeltaTime += myTouch.deltaTime;
 
             if (myTouch.phase == TouchPhase.Began)
             {
                 PosBegan = myTouch.position;
-                Debug.Log(PosBegan);
             }
-            
+
             if (myTouch.phase == TouchPhase.Ended)
             {
                 PosEnded = myTouch.position;
                 PosSum = PosEnded - PosBegan;
-                if (Mathf.Abs(PosSum.x) > Mathf.Abs(PosSum.y))
+
+                if (Mathf.Abs(PosSum.x) < 10 && Mathf.Abs(PosSum.y) < 10)
                 {
-                    Debug.Log("Горизонталь");
+                    Debug.Log("Tap");
+                    TouchExec = 4;
+                    return;
                 }
-                else
+
+                if (Mathf.Abs(PosSum.x) > Mathf.Abs(PosSum.y) && PosSum.x < 0)
                 {
-                    Debug.Log("Вертикаль");
+                    Debug.Log("MoveLeft");
+                    TouchExec = 2;
+                    return;
                 }
+                if (Mathf.Abs(PosSum.x) > Mathf.Abs(PosSum.y) && PosSum.x > 0)
+                {
+                    Debug.Log("MoveRight");
+                    TouchExec = 1;
+                    return;
+                }
+                if (Mathf.Abs(PosSum.x) < Mathf.Abs(PosSum.y) && PosSum.y < 0)
+                {
+                    Debug.Log("MoveDown");
+                    TouchExec = 3;
+                    return;
+                }
+
+
             }
+            //if (myTouch.phase == TouchPhase.Stationary && _touchDeltaTime > 0.3f)
+            //{
+            //    PosEnded = myTouch.position;
+            //    PosSum = PosEnded - PosBegan;
+            //    if (Mathf.Abs(PosSum.x) < Mathf.Abs(PosSum.y) && PosSum.y < 0)
+            //    {
+            //        Debug.Log("MoveDown");
+            //        TouchExec = 3;
+            //        return;
+            //    }
+
+            //}
+
+        }
+        if (Input.touchCount == 0)
+        {
+            _touchDeltaTime = 0;
         }
     }
 }
